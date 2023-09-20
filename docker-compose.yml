@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  go-app:
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis-master
+
+  redis-master:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  redis-replica1:
+    image: redis:latest
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+
+  redis-replica2:
+    image: redis:latest
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+
+  sentinel1:
+    image: redis:latest
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    ports:
+      - "26379:26379"
+    depends_on:
+      - redis-master
+      - redis-replica1
+      - redis-replica2
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+
+  sentinel2:
+    image: redis:latest
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    ports:
+      - "26380:26379"
+    depends_on:
+      - redis-master
+      - redis-replica1
+      - redis-replica2
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+
+  sentinel3:
+    image: redis:latest
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    ports:
+      - "26381:26379"
+    depends_on:
+      - redis-master
+      - redis-replica1
+      - redis-replica2
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
