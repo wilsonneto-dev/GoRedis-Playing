@@ -1,2 +1,3 @@
 docker exec -it <id> redis-cli
 
+k6 run --vus 10 --duration 30s k6.js

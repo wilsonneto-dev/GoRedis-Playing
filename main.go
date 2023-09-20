@@ -10,12 +10,12 @@ import (
 )
 
 type RedisStore struct {
-	client *redis.Client
+	client *redis.ClusterClient
 	ctx    context.Context
 }
 
 func NewRedisStore(password string, db int) *RedisStore {
-	rdb := redis.NewFailoverClient(&redis.FailoverOptions{
+	rdb := redis.NewFailoverClusterClient(&redis.FailoverOptions{
 		MasterName: "mymaster",
 		SentinelAddrs: []string{
 			"sentinel1:26379",
@@ -23,9 +23,8 @@ func NewRedisStore(password string, db int) *RedisStore {
 			"sentinel1:26379"},
 		Password: password,
 		DB:       db,
+		RouteRandomly: true,
 	})
-
-	rdb.ReadOnly(context.Background())
 
 	return &RedisStore{
 		client: rdb,
