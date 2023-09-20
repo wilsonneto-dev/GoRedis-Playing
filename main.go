@@ -19,8 +19,8 @@ func NewRedisStore(password string, db int) *RedisStore {
 		MasterName: "mymaster",
 		SentinelAddrs: []string{
 			"sentinel1:26379",
-			"sentinel1:26379",
-			"sentinel1:26379"},
+			"sentinel2:26379",
+			"sentinel3:26379"},
 		Password: password,
 		DB:       db,
 		RouteRandomly: true,
